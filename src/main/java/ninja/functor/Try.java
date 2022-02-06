@@ -1,32 +1,41 @@
 package ninja.functor;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Try<T> {
-  public final T value;
+  private final Optional<T> value;
 
-  public final Throwable error;
+  private final Optional<Throwable> error;
 
   private Try(T value) {
-    this.value = value;
-    this.error = null;
+    this.value = Optional.of(value);
+    this.error = Optional.empty();
   }
 
   private Try(Throwable error) {
-    this.value = null;
-    this.error = error;
+    this.value = Optional.empty();
+    this.error = Optional.of(error);
+  }
+
+  public T getValue() {
+    return value.get();
+  }
+
+  public Throwable getError() {
+    return error.get();
   }
 
   public boolean isError(){
-    return error != null;
+    return error.isPresent();
   }
 
   public <B> Try<B> map(Function<T, B> function){
     if(isError())
-      return new Try(this.error);
+      return new Try(getError());
     else
-        return build(() -> function.apply(value));
+        return build(() -> function.apply(getValue()));
   }
 
   public static <T> Try<T> build(Supplier<T> constructor) {
