@@ -1,19 +1,20 @@
 package ninja.functor;
 
-import ninja.functor.util.UserUtil;
+import java.util.function.Function;
+import ninja.functor.util.UnsafeUtil;
 import org.junit.jupiter.api.Test;
 
 public class TryTest {
+  private final static Function<Throwable, String> ERROR_FALLBACK = e -> e.toString();
+
   @Test
   public void test() {
-    UserUtil.getSuppliers().forEach(userSupplier -> {
-      final Try<String> email = Try.build(userSupplier)
-          .map(User::getEmail);
-
-      final String message = email.isError()
-          ? "error: " + email.getError().getClass().getSimpleName()
-          : "email: " + email.getValue();
-      System.out.println(message);
-    });
+    UnsafeUtil.getUserSupplierStream()
+        .map(Try::build)
+        .map(user -> user.map(User::getEmail))
+        .map(email -> email.isError()
+            ? "error: " + ERROR_FALLBACK.apply(email.getError()) // fallback function
+            : "email: " + email.getValue())
+        .forEach(System.out::println);
   }
 }

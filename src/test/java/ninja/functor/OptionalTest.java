@@ -2,31 +2,28 @@ package ninja.functor;
 
 import java.util.Optional;
 import java.util.function.Supplier;
-import ninja.functor.util.UserUtil;
+import ninja.functor.util.UnsafeUtil;
 import org.junit.jupiter.api.Test;
 
 public class OptionalTest {
-  @Test
-  public void test() {
-    final String emptyMessage = "not defined";
+  private final static String EMPTY_FALLBACK = "empty value";
 
-    UserUtil.getSuppliers()
-        .map(this::optionalHandler)
-        .forEach(databaseRead -> {
-          final Optional<String> email = databaseRead
-              .map(User::getEmail);
-          final String message = email.isEmpty()
-              ? emptyMessage // fallback
-              : email.get();
-          System.out.println(message);
-        });
-  }
-
-  private <T> Optional<T> optionalHandler(Supplier<T> supplier) {
+  private static <T> Optional<T> builder(Supplier<T> supplier) {
     try {
       return Optional.of(supplier.get());
     } catch (Throwable e) {
       return Optional.empty();
     }
+  }
+
+  @Test
+  public void test() {
+    UnsafeUtil.getUserSupplierStream()
+        .map(OptionalTest::builder)
+        .map(user -> user.map(User::getEmail))
+        .map(email -> email.isEmpty()
+            ? "error: " + EMPTY_FALLBACK
+            : "email: " + email.get())
+        .forEach(System.out::println);
   }
 }

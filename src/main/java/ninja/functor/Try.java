@@ -19,6 +19,14 @@ public class Try<T> {
     this.error = Optional.of(error);
   }
 
+  public static <T> Try<T> build(Supplier<T> constructor) {
+    try {
+      return new Try(constructor.get());
+    } catch (Throwable e) {
+      return new Try(e);
+    }
+  }
+
   public T getValue() {
     return value.get();
   }
@@ -27,22 +35,15 @@ public class Try<T> {
     return error.get();
   }
 
-  public boolean isError(){
+  public boolean isError() {
     return error.isPresent();
   }
 
-  public <B> Try<B> map(Function<T, B> function){
-    if(isError())
+  public <B> Try<B> map(Function<T, B> function) {
+    if (isError()) {
       return new Try(getError());
-    else
-        return build(() -> function.apply(getValue()));
-  }
-
-  public static <T> Try<T> build(Supplier<T> constructor) {
-    try {
-      return new Try(constructor.get());
-    } catch (Throwable e){
-      return new Try(e);
+    } else {
+      return build(() -> function.apply(getValue()));
     }
   }
 }

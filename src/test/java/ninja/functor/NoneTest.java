@@ -1,19 +1,20 @@
 package ninja.functor;
 
-import ninja.functor.util.UserUtil;
+import ninja.functor.util.UnsafeUtil;
 import org.junit.jupiter.api.Test;
 
 public class NoneTest {
   @Test
   public void test() {
-    UserUtil.getSuppliers().forEach(databaseRead -> {
-      try {
-        final User user = databaseRead.get();
-        final String email = user.getEmail();
-        System.out.println(email);
-      } catch (Throwable e) {
-        e.printStackTrace();
-      }
-    });
+    UnsafeUtil.getUserSupplierStream()
+        .forEach(userSupplier -> {
+          try {
+            final User user = userSupplier.get();
+            final String email = user.getEmail();
+            System.out.println("email: " + email);
+          } catch (Throwable e) {
+            System.out.println("error: " + e);
+          }
+        });
   }
 }
