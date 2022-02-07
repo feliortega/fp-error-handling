@@ -1,11 +1,11 @@
 package ninja.functor;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
-import ninja.functor.util.UnsafeUtil;
 import org.junit.jupiter.api.Test;
 
-public class OptionalTest {
+public class OptionalTest extends BaseTest {
   private final static String EMPTY_FALLBACK = "empty value";
 
   private static <T> Optional<T> builder(Supplier<T> supplier) {
@@ -18,7 +18,7 @@ public class OptionalTest {
 
   @Test
   public void test() {
-    UnsafeUtil.getUserSupplierStream()
+    Arrays.stream(USER_SUPPLIER)
         .map(OptionalTest::builder)
         .map(user -> user.map(User::getEmail))
         .map(email -> email.isEmpty()

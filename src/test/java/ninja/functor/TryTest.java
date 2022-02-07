@@ -1,15 +1,15 @@
 package ninja.functor;
 
+import java.util.Arrays;
 import java.util.function.Function;
-import ninja.functor.util.UnsafeUtil;
 import org.junit.jupiter.api.Test;
 
-public class TryTest {
+public class TryTest extends BaseTest {
   private final static Function<Throwable, String> ERROR_FALLBACK = e -> e.toString();
 
   @Test
   public void test() {
-    UnsafeUtil.getUserSupplierStream()
+    Arrays.stream(USER_SUPPLIER)
         .map(Try::build)
         .map(user -> user.map(User::getEmail))
         .map(email -> email.isError()
