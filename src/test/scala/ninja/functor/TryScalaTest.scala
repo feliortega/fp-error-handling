@@ -1,7 +1,7 @@
 package ninja.functor
 
 import ninja.functor.BaseTest.USER_SUPPLIER
-import ninja.functor.TryScalaTest.supplierToScala
+import ninja.functor.TryScalaTest.toScala
 import org.junit.jupiter.api.Test
 
 import java.util.function.Supplier
@@ -14,13 +14,13 @@ class TryScalaTest {
       .map { f => Try(f()) }
       .map { t => t.map(_.getEmail) }
       .map {
-        case Failure(error) => s"error: ${error.toString}"
-        case Success(value) => s"email: ${value}"
+        case Failure(error) => s"error: $error"
+        case Success(value) => s"email: $value"
       }
       .foreach(println)
   }
 }
 
 object TryScalaTest {
-  implicit def supplierToScala[A](f: Supplier[A]): () => A = () => f.get
+  implicit def toScala[A](f: Supplier[A]): () => A = () => f.get
 }
