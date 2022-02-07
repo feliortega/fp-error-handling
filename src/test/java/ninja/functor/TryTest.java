@@ -5,7 +5,9 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 public class TryTest extends BaseTest {
-  private final static Function<Throwable, String> ERROR_FALLBACK = e -> e.toString();
+  private final static String errorFallback(Throwable e) {
+    return e.toString();
+  }
 
   @Test
   public void test() {
@@ -13,7 +15,7 @@ public class TryTest extends BaseTest {
         .map(Try::build)
         .map(user -> user.map(User::getEmail))
         .map(email -> email.isError()
-            ? "error: " + ERROR_FALLBACK.apply(email.getError()) // fallback function
+            ? "error: " + errorFallback(email.getError())
             : "email: " + email.getValue())
         .forEach(System.out::println);
   }

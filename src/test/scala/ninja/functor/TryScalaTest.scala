@@ -9,11 +9,7 @@ class TryScalaTest {
   @Test
   def test() = {
     USER_SUPPLIER.map(f => () => f.get())
-      .map { f =>
-        Try {
-          f()
-        }
-      }
+      .map { f => Try { f() } }
       .map { t => t.map(_.getEmail) }
       .map {
         case Failure(error) => s"error: ${error.toString}"
